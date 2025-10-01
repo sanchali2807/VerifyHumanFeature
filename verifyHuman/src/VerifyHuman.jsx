@@ -9,15 +9,14 @@ const VerifyHuman = () => {
   useEffect(() => {
     let timer;
     if (email.trim() !== "" && password.trim() !== "") {
-      // Show checkbox after 500ms
       timer = setTimeout(() => {
         setShowCheckbox(true);
-      }, 600);
+      }, 500);
     } else {
       setShowCheckbox(false);
       setIsHuman(false);
     }
-    return () => clearTimeout(timer); // Cleanup if fields change
+    return () => clearTimeout(timer);
   }, [email, password]);
 
   const handleSubmit = (e) => {
@@ -31,7 +30,6 @@ const VerifyHuman = () => {
       return;
     }
     alert("Form submitted successfully!");
-    // Call your login API here
   };
 
   return (
@@ -71,45 +69,56 @@ const VerifyHuman = () => {
             </div>
           )}
 
-          <button type="submit" style={styles.button}>Sign In</button>
+          <button type="submit" style={styles.button}>
+            Sign In
+          </button>
         </form>
       </div>
     </div>
   );
 };
 
-// Styles
 const styles = {
   outerContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-    backgroundColor: "#1a1a1a",
-  },
+  position: "fixed",        // make sure it covers whole screen
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  display: "flex",
+  justifyContent: "center", // center horizontally
+  alignItems: "center",     // center vertically
+  backgroundColor: "#1a1a1a",
+},
+
   container: {
     backgroundColor: "#2c2c2c",
     color: "white",
     padding: "30px",
-    borderRadius: "8px",
-    width: "300px",
+    borderRadius: "12px",
+    width: "100%",
+    maxWidth: "400px",
+    boxSizing: "border-box",
     fontFamily: "Arial, sans-serif",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.6)", // subtle shadow
   },
   heading: {
     textAlign: "center",
     marginBottom: "20px",
+    fontSize: "24px",
   },
   form: {
     display: "flex",
     flexDirection: "column",
   },
   input: {
-    padding: "8px",
+    padding: "12px",
     marginBottom: "15px",
-    borderRadius: "4px",
-    border: "1px solid #555",
+    borderRadius: "6px",
+    border: "1px solid #444",
     backgroundColor: "#1a1a1a",
     color: "white",
+    outline: "none",
   },
   checkboxContainer: {
     display: "flex",
@@ -117,13 +126,14 @@ const styles = {
     marginBottom: "15px",
   },
   button: {
-    padding: "10px",
+    padding: "12px",
     backgroundColor: "#4f46e5",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "6px",
     color: "white",
     fontWeight: "bold",
     cursor: "pointer",
+    transition: "0.3s",
   },
 };
 
