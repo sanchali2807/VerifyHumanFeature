@@ -3,15 +3,51 @@ import React, { useState, useEffect } from "react";
 const VerifyHuman = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [showCheckbox, setShowCheckbox] = useState(false);
   const [isHuman, setIsHuman] = useState(false);
 
+  // Email validation regex
+  const validateEmail = (value) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(value);
+  };
+
+  // Password validation: must be alphanumeric, at least 8 chars
+  const validatePassword = (value) => {
+    const regex = /^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9]{8,}$/;
+    return regex.test(value);
+  };
+
+  // Debounce validation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (email && !validateEmail(email)) {
+        setEmailError("Please enter a valid email address.");
+      } else {
+        setEmailError("");
+      }
+
+      if (password && !validatePassword(password)) {
+        setPasswordError(
+          "Password must be at least 8 characters long and contain letters and numbers only."
+        );
+      } else {
+        setPasswordError("");
+      }
+    }, 500); // wait 500ms after user stops typing
+
+    return () => clearTimeout(timer);
+  }, [email, password]);
+
+  // Show checkbox if both filled
   useEffect(() => {
     let timer;
     if (email.trim() !== "" && password.trim() !== "") {
       timer = setTimeout(() => {
         setShowCheckbox(true);
-      }, 500);
+      }, 600);
     } else {
       setShowCheckbox(false);
       setIsHuman(false);
@@ -21,14 +57,29 @@ const VerifyHuman = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setPasswordError(
+        "Password must be at least 8 characters long and contain letters and numbers only."
+      );
+      return;
+    }
+
     if (!showCheckbox) {
       alert("Please fill both email and password first.");
       return;
     }
+
     if (!isHuman) {
       alert("Please confirm that you are not a robot.");
       return;
     }
+
     alert("Form submitted successfully!");
   };
 
@@ -45,6 +96,7 @@ const VerifyHuman = () => {
             required
             style={styles.input}
           />
+          {emailError && <span style={styles.error}>{emailError}</span>}
 
           <label>Password:</label>
           <input
@@ -54,6 +106,7 @@ const VerifyHuman = () => {
             required
             style={styles.input}
           />
+          {passwordError && <span style={styles.error}>{passwordError}</span>}
 
           {showCheckbox && (
             <div style={styles.checkboxContainer}>
@@ -80,17 +133,16 @@ const VerifyHuman = () => {
 
 const styles = {
   outerContainer: {
-  position: "fixed",        // make sure it covers whole screen
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  display: "flex",
-  justifyContent: "center", // center horizontally
-  alignItems: "center",     // center vertically
-  backgroundColor: "#1a1a1a",
-},
-
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#1a1a1a",
+  },
   container: {
     backgroundColor: "#2c2c2c",
     color: "white",
@@ -100,7 +152,7 @@ const styles = {
     maxWidth: "400px",
     boxSizing: "border-box",
     fontFamily: "Arial, sans-serif",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.6)", // subtle shadow
+    boxShadow: "0 4px 15px rgba(0,0,0,0.6)",
   },
   heading: {
     textAlign: "center",
@@ -113,12 +165,17 @@ const styles = {
   },
   input: {
     padding: "12px",
-    marginBottom: "15px",
+    marginBottom: "10px",
     borderRadius: "6px",
     border: "1px solid #444",
     backgroundColor: "#1a1a1a",
     color: "white",
     outline: "none",
+  },
+  error: {
+    color: "red",
+    fontSize: "12px",
+    marginBottom: "10px",
   },
   checkboxContainer: {
     display: "flex",
