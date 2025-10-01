@@ -20,38 +20,34 @@ const VerifyHuman = () => {
     return regex.test(value);
   };
 
-  // Debounce validation
+  // Debounced validation for BOTH email + password
   useEffect(() => {
     const timer = setTimeout(() => {
+      // email
       if (email && !validateEmail(email)) {
         setEmailError("Please enter a valid email address.");
       } else {
         setEmailError("");
       }
 
+      // password
       if (password && !validatePassword(password)) {
         setPasswordError(
-          "Password must be at least 8 characters long and contain letters and numbers only."
+          "Password must be at least 8 characters long and contain only letters and numbers."
         );
       } else {
         setPasswordError("");
       }
-    }, 500); // wait 500ms after user stops typing
 
-    return () => clearTimeout(timer);
-  }, [email, password]);
-
-  // Show checkbox if both filled
-  useEffect(() => {
-    let timer;
-    if (email.trim() !== "" && password.trim() !== "") {
-      timer = setTimeout(() => {
+      // checkbox logic
+      if (email.trim() !== "" && password.trim() !== "") {
         setShowCheckbox(true);
-      }, 600);
-    } else {
-      setShowCheckbox(false);
-      setIsHuman(false);
-    }
+      } else {
+        setShowCheckbox(false);
+        setIsHuman(false);
+      }
+    }, 800); // increased debounce to 800ms for more realistic "user finished typing"
+
     return () => clearTimeout(timer);
   }, [email, password]);
 
@@ -65,7 +61,7 @@ const VerifyHuman = () => {
 
     if (!validatePassword(password)) {
       setPasswordError(
-        "Password must be at least 8 characters long and contain letters and numbers only."
+        "Password must be at least 8 characters long and contain only letters and numbers."
       );
       return;
     }
